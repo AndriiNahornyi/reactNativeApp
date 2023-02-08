@@ -11,7 +11,6 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
-  Button,
 } from "react-native";
 
 const initialState = {
@@ -44,7 +43,7 @@ export default function RegistrationScreen({ navigation }) {
           source={require("../../assets/images/fire.png")}
         >
           <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
+            behavior={Platform.OS == "ios" ? "padding" : ""}
           >
             <View
               style={{

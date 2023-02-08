@@ -40,7 +40,6 @@ export const useRoute = (isAuth) => {
     //   screenOptions={{
     //     tabBarStyle: { tabBarShowLabel: false },
     //   }}
-    //   tabBarOptions={{ showLabel: false }}
     >
       <MainTab.Screen
         options={{
