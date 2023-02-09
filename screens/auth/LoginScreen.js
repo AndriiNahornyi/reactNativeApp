@@ -37,7 +37,7 @@ export default function LoginScreen({ navigation }) {
       >
         <ImageBackground
           style={styles.image}
-          source={require("../../assets/images/fire.png")}
+          source={require("../../assets/images/Photo-BG.jpg")}
         >
           <KeyboardAvoidingView
             behavior={Platform.OS == "ios" ? "padding" : ""}
@@ -56,14 +56,14 @@ export default function LoginScreen({ navigation }) {
               }}
             >
               <View style={styles.header}>
-                <Text style={styles.text}>Glory to Ukraine!</Text>
-                <Text style={styles.text}>Glory to the Heroes!</Text>
+                <Text style={styles.text}>Увійти</Text>
               </View>
               <View>
-                <Text style={styles.inputTitle}>EMAIL ADDRESS</Text>
+                {/* <Text style={styles.inputTitle}>EMAIL ADDRESS</Text> */}
                 <TextInput
                   style={styles.input}
-                  textAlign={"center"}
+                  placeholder="Адреса електронної пошти"
+                  placeholderTextColor="#BDBDBD"
                   onFocus={() => setIsShowKeyboard(true)}
                   value={state.email}
                   onChangeText={(value) =>
@@ -72,10 +72,11 @@ export default function LoginScreen({ navigation }) {
                 />
               </View>
               <View style={{ marginTop: 5 }}>
-                <Text style={styles.inputTitle}>PASSWORD</Text>
+                {/* <Text style={styles.inputTitle}>PASSWORD</Text> */}
                 <TextInput
                   style={styles.input}
-                  textAlign={"center"}
+                  placeholder="Пароль"
+                  placeholderTextColor="#BDBDBD"
                   secureTextEntry={true}
                   onFocus={() => setIsShowKeyboard(true)}
                   value={state.password}
@@ -89,7 +90,7 @@ export default function LoginScreen({ navigation }) {
                 style={styles.btn}
                 onPress={keyboardHide}
               >
-                <Text style={styles.btnTitle}>SIGN IN</Text>
+                <Text style={styles.btnTitle}>Увійти</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => navigation.navigate("Registration")}
@@ -101,17 +102,17 @@ export default function LoginScreen({ navigation }) {
                 <Text
                   style={{
                     fontSize: 20,
-                    color: "#fff",
+                    // color: "#fff",
                   }}
                 >
-                  New to application?
+                  Немає акаунта?
                   <Text
                     style={{
-                      fontSize: 24,
-                      color: "#7fff00",
+                      fontSize: 20,
+                      // color: "#7fff00",
                     }}
                   >
-                    Sign Up
+                    Зареєструватись
                   </Text>
                 </Text>
               </TouchableOpacity>
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     // justifyContent: "center",
   },
   text: {
-    color: "yellow",
+    // color: "yellow",
     fontSize: 28,
     // marginHorizontal: 10,
     marginBottom: 10,
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ffff00",
+    // borderColor: "#ffff00",
     borderRadius: 10,
     padding: 5,
     color: "#29abf4",
@@ -158,8 +159,11 @@ const styles = StyleSheet.create({
     // marginHorizontal: 30,
   },
   form: {
-    marginHorizontal: 30,
-    // marginBottom: 100,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    height: 489,
+    backgroundColor: "#fff",
+    paddingTop: 32,
   },
   inputTitle: {
     color: "#29abf4",
@@ -176,30 +180,13 @@ const styles = StyleSheet.create({
     // marginHorizontal: 40,
     justifyContent: "center",
     alignItems: "center",
-
-    ...Platform.select({
-      ios: {
-        borderColor: "transparent",
-        backgroundColor: "yellow",
-      },
-      android: {
-        borderColor: "#29abf4",
-        backgroundColor: "#29abf4",
-      },
-    }),
+    backgroundColor: "#ff6c00",
   },
   btnTitle: {
     fontSize: 16,
     fontWeight: "700",
     letterSpacing: 1.2,
-    ...Platform.select({
-      ios: {
-        color: "#29abf4",
-      },
-      android: {
-        color: "yellow",
-      },
-    }),
+    color: "#fff",
   },
   header: {
     alignItems: "center",
