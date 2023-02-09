@@ -40,19 +40,19 @@ export default function LoginScreen({ navigation }) {
           source={require("../../assets/images/fire.png")}
         >
           <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : ""}
+            behavior={Platform.OS == "ios" ? "padding" : ""}
           >
             <View
               style={{
-                // ...Platform.select({
-                //   ios: {
-                ...styles.form,
-                marginBottom: isShowKeyboard ? 20 : 150,
-                //   },
-                //   android: {
-                //     ...styles.form,
-                //   },
-                // }),
+                ...Platform.select({
+                  ios: {
+                    ...styles.form,
+                    marginBottom: isShowKeyboard ? 140 : 0,
+                  },
+                  android: {
+                    ...styles.form,
+                  },
+                }),
               }}
             >
               <View style={styles.header}>
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   },
   form: {
     marginHorizontal: 30,
-    marginBottom: 100,
+    // marginBottom: 100,
   },
   inputTitle: {
     color: "#29abf4",

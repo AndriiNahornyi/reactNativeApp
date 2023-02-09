@@ -47,15 +47,15 @@ export default function RegistrationScreen({ navigation }) {
           >
             <View
               style={{
-                // ...Platform.select({
-                //   ios: {
-                ...styles.form,
-                marginBottom: isShowKeyboard ? 20 : 150,
-                //   },
-                //   android: {
-                //     ...styles.form,
-                //   },
-                // }),
+                ...Platform.select({
+                  ios: {
+                    ...styles.form,
+                    marginBottom: isShowKeyboard ? 140 : 0,
+                  },
+                  android: {
+                    ...styles.form,
+                  },
+                }),
               }}
             >
               <View style={styles.header}>
