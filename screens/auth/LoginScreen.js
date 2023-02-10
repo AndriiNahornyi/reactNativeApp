@@ -11,7 +11,6 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
-  Button,
 } from "react-native";
 const initialState = {
   email: "",
@@ -31,10 +30,7 @@ export default function LoginScreen({ navigation }) {
   };
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
-      <View
-        style={styles.container}
-        // onLayout={onLayoutRootView}
-      >
+      <View style={styles.container}>
         <ImageBackground
           style={styles.image}
           source={require("../../assets/images/Photo-BG.jpg")}
@@ -47,43 +43,50 @@ export default function LoginScreen({ navigation }) {
                 ...Platform.select({
                   ios: {
                     ...styles.form,
-                    marginBottom: isShowKeyboard ? 140 : 0,
+                    marginBottom: isShowKeyboard ? 58 : 0,
+                    // marginBottom: isShowKeyboard ? 180 : 0,
                   },
                   android: {
                     ...styles.form,
+                    // paddingBottom: isShowKeyboard ? 0 : 140,
                   },
                 }),
               }}
             >
-              <View style={styles.header}>
-                <Text style={styles.text}>Увійти</Text>
-              </View>
+              <Text style={styles.text}>Увійти</Text>
+              <TextInput
+                // onSubmitEditing={onReturn}
+                style={styles.input}
+                placeholder="Адреса електронної пошти"
+                placeholderTextColor="#BDBDBD"
+                value={state.email}
+                onFocus={() => setIsShowKeyboard(true)}
+                onChangeText={(value) =>
+                  setState((prevState) => ({ ...prevState, email: value }))
+                }
+              />
               <View>
-                {/* <Text style={styles.inputTitle}>EMAIL ADDRESS</Text> */}
                 <TextInput
-                  style={styles.input}
-                  placeholder="Адреса електронної пошти"
-                  placeholderTextColor="#BDBDBD"
-                  onFocus={() => setIsShowKeyboard(true)}
-                  value={state.email}
-                  onChangeText={(value) =>
-                    setState((prevState) => ({ ...prevState, email: value }))
-                  }
-                />
-              </View>
-              <View style={{ marginTop: 5 }}>
-                {/* <Text style={styles.inputTitle}>PASSWORD</Text> */}
-                <TextInput
+                  // onSubmitEditing={onReturn}
                   style={styles.input}
                   placeholder="Пароль"
                   placeholderTextColor="#BDBDBD"
+                  value={state.password}
                   secureTextEntry={true}
                   onFocus={() => setIsShowKeyboard(true)}
-                  value={state.password}
                   onChangeText={(value) =>
                     setState((prevState) => ({ ...prevState, password: value }))
                   }
                 />
+                <Text
+                  // onPress={() => {
+                  //   setIsPasswordSecure(!isPasswordSecure);
+                  // }}              або
+                  // onPress={changeIsPasswordSecure}
+                  style={styles.showPassword}
+                >
+                  {/* {isPasswordSecure ? "Показати" : "Приховати"} */}
+                </Text>
               </View>
               <TouchableOpacity
                 activeOpacity={0.8}
@@ -94,33 +97,13 @@ export default function LoginScreen({ navigation }) {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => navigation.navigate("Registration")}
-                style={{
-                  marginTop: 10,
-                  alignItems: "center",
-                }}
               >
-                <Text
-                  style={{
-                    fontSize: 20,
-                    // color: "#fff",
-                  }}
-                >
-                  Немає акаунта?
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      // color: "#7fff00",
-                    }}
-                  >
-                    Зареєструватись
-                  </Text>
-                </Text>
+                <Text style={styles.login}>Немає акаунту? Зареєструватися</Text>
               </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
-          <StatusBar style="auto" />
         </ImageBackground>
-        {/* <StatusBar style="auto" /> */}
+        <StatusBar style="auto" />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -129,67 +112,72 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    // marginBottom: 100,
-    // alignItems: "center",
-    // justifyContent: "center",
-  },
-  text: {
-    // color: "yellow",
-    fontSize: 28,
-    // marginHorizontal: 10,
-    marginBottom: 10,
-    fontFamily: "Roboto-Regular",
   },
   image: {
     flex: 1,
     resizeMode: "cover",
     justifyContent: "flex-end",
-    // alignItems: "center",
+  },
+  text: {
+    marginHorizontal: 16,
+    marginBottom: 16,
+    fontSize: 30,
+    lineHeight: 35,
+    letterSpacing: 0.01,
+    textAlign: "center",
+    fontFamily: "Roboto-Medium",
   },
   input: {
+    marginTop: 16,
+    marginHorizontal: 16,
+    padding: 16,
     borderWidth: 1,
-    // borderColor: "#ffff00",
-    borderRadius: 10,
-    padding: 5,
-    color: "#29abf4",
+    borderColor: "#E8E8E8",
+    borderRadius: 8,
+    color: "#212121",
+    backgroundColor: "#F6F6F6",
     fontSize: 16,
-    fontWeight: "bold",
-    letterSpacing: 1.5,
-    // width: 340,
-    // marginHorizontal: 30,
+    fontFamily: "Roboto-Regular",
+    lineHeight: 19,
+  },
+  showPassword: {
+    position: "absolute",
+    top: 32,
+    // top: 152,
+    right: 32,
+    color: "#1B4371",
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    lineHeight: 19,
   },
   form: {
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
+    paddingTop: 32,
     height: 489,
     backgroundColor: "#fff",
-    paddingTop: 32,
-  },
-  inputTitle: {
-    color: "#29abf4",
-    marginBottom: 5,
-    fontSize: 14,
   },
   btn: {
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 5,
-    fontSize: 16,
-    fontWeight: "bold",
-    marginTop: 20,
-    // marginHorizontal: 40,
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 43,
+    marginBottom: 16,
+    marginHorizontal: 16,
     backgroundColor: "#ff6c00",
+    height: 51,
+    borderRadius: 100,
   },
   btnTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    letterSpacing: 1.2,
     color: "#fff",
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    lineHeight: 19,
   },
-  header: {
-    alignItems: "center",
-    // marginBottom: 120,
+  login: {
+    color: "#1B4371",
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    lineHeight: 19,
+    textAlign: "center",
   },
 });

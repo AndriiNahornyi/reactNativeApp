@@ -34,10 +34,7 @@ export default function RegistrationScreen({ navigation }) {
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
-      <View
-        style={styles.container}
-        // onLayout={onLayoutRootView}
-      >
+      <View style={styles.container}>
         <ImageBackground
           style={styles.image}
           source={require("../../assets/images/Photo-BG.jpg")}
@@ -51,95 +48,73 @@ export default function RegistrationScreen({ navigation }) {
                   ios: {
                     ...styles.form,
                     marginBottom: isShowKeyboard ? 140 : 0,
+                    // marginBottom: isShowKeyboard ? 180 : 0,
                   },
                   android: {
                     ...styles.form,
+                    // paddingBottom: isShowKeyboard ? 0 : 78,
                   },
                 }),
               }}
             >
-              <View style={styles.header}>
-                <Text style={styles.text}>Реєстрація</Text>
-              </View>
-              <View>
-                {/* <Text style={styles.inputTitle}>LOGIN</Text> */}
-                <TextInput
-                  style={styles.input}
-                  textAlign={"center"}
-                  placeholder="Логін"
-                  placeholderTextColor="#BDBDBD"
-                  onFocus={() => setIsShowKeyboard(true)}
-                  value={state.email}
-                  onChangeText={(value) =>
-                    setState((prevState) => ({ ...prevState, login: value }))
-                  }
-                />
-              </View>
-              <View style={{ marginTop: 5 }}>
-                {/* <Text style={styles.inputTitle}>EMAIL ADDRESS</Text> */}
-                <TextInput
-                  style={styles.input}
-                  textAlign={"center"}
-                  placeholder="Адреса електронної пошти"
-                  placeholderTextColor="#BDBDBD"
-                  onFocus={() => setIsShowKeyboard(true)}
-                  value={state.email}
-                  onChangeText={(value) =>
-                    setState((prevState) => ({ ...prevState, email: value }))
-                  }
-                />
-              </View>
-              <View style={{ marginTop: 5 }}>
-                {/* <Text style={styles.inputTitle}>PASSWORD</Text> */}
-                <TextInput
-                  style={styles.input}
-                  textAlign={"center"}
-                  placeholder="Пароль"
-                  placeholderTextColor="#BDBDBD"
-                  secureTextEntry={true}
-                  onFocus={() => setIsShowKeyboard(true)}
-                  value={state.password}
-                  onChangeText={(value) =>
-                    setState((prevState) => ({ ...prevState, password: value }))
-                  }
-                />
-              </View>
+              <Text style={styles.text}>Реєстрація</Text>
+              <TextInput
+                // onSubmitEditing={onReturn}
+                style={styles.input}
+                placeholder="Логін"
+                placeholderTextColor="#BDBDBD"
+                value={state.email}
+                onFocus={() => setIsShowKeyboard(true)}
+                onChangeText={(value) =>
+                  setState((prevState) => ({ ...prevState, login: value }))
+                }
+              />
+              <TextInput
+                // onSubmitEditing={onReturn}
+                style={styles.input}
+                placeholder="Адреса електронної пошти"
+                placeholderTextColor="#BDBDBD"
+                value={state.email}
+                onFocus={() => setIsShowKeyboard(true)}
+                onChangeText={(value) =>
+                  setState((prevState) => ({ ...prevState, email: value }))
+                }
+              />
+              <TextInput
+                // onSubmitEditing={onReturn}
+                style={styles.input}
+                placeholder="Пароль"
+                placeholderTextColor="#BDBDBD"
+                value={state.password}
+                secureTextEntry={true}
+                onFocus={() => setIsShowKeyboard(true)}
+                onChangeText={(value) =>
+                  setState((prevState) => ({ ...prevState, password: value }))
+                }
+              />
+              <Text
+                // onPress={() => {
+                //   setIsPasswordSecure(!isPasswordSecure);
+                // }}   або
+                //   onPress={changeIsPasswordSecure}
+                style={styles.showPassword}
+              >
+                {/* {isPasswordSecure ? "Показати" : "Приховати"} */}
+              </Text>
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.btn}
                 onPress={keyboardHide}
               >
-                <Text style={styles.btnTitle}>Зареєструватись</Text>
+                <Text style={styles.btnTitle}>Зареєструватися</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("Login")}
-                style={{
-                  marginTop: 10,
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 20,
-                    // color: "#fff",
-                  }}
-                >
-                  Вже є акаунт?
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      // color: "#fff",
-                    }}
-                  >
-                    Увійти
-                  </Text>
-                </Text>
+              <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                <Text style={styles.login}>Вже є акаунт? Увійти</Text>
               </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
-          <StatusBar style="auto" />
         </ImageBackground>
-        {/* <StatusBar style="auto" /> */}
+        <StatusBar style="auto" />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -148,67 +123,75 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    // marginBottom: 100,
-    // alignItems: "center",
-    // justifyContent: "center",
-  },
-  text: {
-    // color: "yellow",
-    fontSize: 28,
-    // marginHorizontal: 10,
-    marginBottom: 10,
-    fontFamily: "Roboto-Regular",
   },
   image: {
     flex: 1,
-    resizeMode: "cover",
     justifyContent: "flex-end",
-    // alignItems: "center",
+    resizeMode: "cover",
+  },
+  text: {
+    marginTop: 92,
+    marginHorizontal: 16,
+    marginBottom: 16,
+    textAlign: "center",
+    fontSize: 30,
+    lineHeight: 35,
+    letterSpacing: 0.01,
+    fontFamily: "Roboto-Medium",
   },
   input: {
+    position: "relative",
+    marginHorizontal: 16,
+    marginTop: 16,
+    padding: 16,
     borderWidth: 1,
-    // borderColor: "#ffff00",
-    borderRadius: 10,
-    padding: 5,
-    color: "#29abf4",
+    borderColor: "#E8E8E8",
+    borderRadius: 8,
+    color: "#212121",
+    backgroundColor: "#F6F6F6",
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
-    fontWeight: "bold",
-    letterSpacing: 1.5,
-    // width: 340,
-    // marginHorizontal: 30,
+    lineHeight: 19,
+  },
+  showPassword: {
+    position: "absolute",
+    top: 32,
+    // top: 320,
+    right: 32,
+    color: "#1B4371",
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    lineHeight: 19,
   },
   form: {
+    position: "relative",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
-    height: 489,
-    backgroundColor: "#fff",
     paddingTop: 32,
-  },
-  inputTitle: {
-    color: "#29abf4",
-    marginBottom: 5,
-    fontSize: 14,
+    height: 549,
+    backgroundColor: "#fff",
   },
   btn: {
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 5,
-    fontSize: 16,
-    fontWeight: "bold",
-    marginTop: 20,
-    // marginHorizontal: 40,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#ff6c00",
+    marginHorizontal: 16,
+    marginTop: 43,
+    marginBottom: 16,
+    height: 51,
+    backgroundColor: "#FF6C00",
+    borderRadius: 100,
   },
   btnTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    letterSpacing: 1.2,
     color: "#fff",
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    lineHeight: 19,
   },
-  header: {
-    alignItems: "center",
-    // marginBottom: 120,
+  login: {
+    textAlign: "center",
+    color: "#1B4371",
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    lineHeight: 19,
   },
 });
