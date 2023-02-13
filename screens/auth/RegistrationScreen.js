@@ -12,11 +12,14 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { authSignUpUser } from "../../redux/auth/authOperations";
 
 const initialState = {
-  email: "",
+  mail: "",
   password: "",
   login: "",
+  // photo: '',
 };
 
 export default function RegistrationScreen({ navigation }) {
@@ -25,11 +28,18 @@ export default function RegistrationScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
 
+  const dispatch = useDispatch();
+
+  const registration = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+    dispatch(authSignUpUser(state));
+    setState(initialState);
+  };
+
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-    // console.log(state);
-    setState(initialState);
   };
 
   return (
@@ -63,7 +73,7 @@ export default function RegistrationScreen({ navigation }) {
                 style={styles.input}
                 placeholder="Логін"
                 placeholderTextColor="#BDBDBD"
-                value={state.email}
+                value={state.login}
                 onFocus={() => setIsShowKeyboard(true)}
                 onChangeText={(value) =>
                   setState((prevState) => ({ ...prevState, login: value }))
@@ -74,10 +84,10 @@ export default function RegistrationScreen({ navigation }) {
                 style={styles.input}
                 placeholder="Адреса електронної пошти"
                 placeholderTextColor="#BDBDBD"
-                value={state.email}
+                value={state.mail}
                 onFocus={() => setIsShowKeyboard(true)}
                 onChangeText={(value) =>
-                  setState((prevState) => ({ ...prevState, email: value }))
+                  setState((prevState) => ({ ...prevState, mail: value }))
                 }
               />
               <TextInput
@@ -104,7 +114,7 @@ export default function RegistrationScreen({ navigation }) {
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.btn}
-                onPress={keyboardHide}
+                onPress={registration}
               >
                 <Text style={styles.btnTitle}>Зареєструватися</Text>
               </TouchableOpacity>

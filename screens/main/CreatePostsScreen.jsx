@@ -1,45 +1,89 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   Image,
+  TextInput,
   Dimensions,
 } from "react-native";
 import { Camera } from "expo-camera";
 import * as Location from "expo-location";
+import db from "../../firebase/config";
 // icons import
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
 
 export default function CreateScreen({ navigation }) {
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [camera, setCamera] = useState(null);
   const [photo, setPhoto] = useState(null);
+  const [title, setTitle] = useState("");
+  const [place, setPlace] = useState("");
+  const [location, setLocation] = useState(null);
+
+  const { userId, login } = useSelector((state) => state.auth);
 
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
-      console.log(status);
       if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
+        console.log("Permission to access location was denied");
+        return;
       }
+      let currentLocation = await Location.getCurrentPositionAsync({});
+      setLocation(currentLocation);
     })();
   }, []);
+
   const takePhoto = async () => {
-    const photo = await camera.takePictureAsync();
-    let location = await Location.getCurrentPositionAsync({});
-    console.log(location.coords.latitude);
-    console.log(location.coords.longitude);
-    setPhoto(photo.uri);
-    // console.log(photo);
-    // console.log("camera --->", photo.uri);
+    console.log("location", location);
+    console.log("title", title);
+    console.log("place", place);
+    const { status } = await Camera.requestCameraPermissionsAsync();
+
+    if (status !== "granted") {
+      console.log("Permission to access camera was denied");
+      return;
+    }
+    const { uri } = await camera.takePictureAsync();
+
+    setPhoto(uri);
+    console.log("photo uri ", uri);
   };
-  const sendPhoto = async () => {
-    console.log(navigation);
-    navigation.navigate("Home", { photo });
+
+  const sendPhoto = () => {
+    uploadPostToServer();
+    navigation.navigate("Home");
   };
+  const uploadPostToServer = async () => {
+    const photo = await uploadPhotoToServer();
+    const createPost = await db.firestore().collection("posts").add({
+      photo,
+      title,
+      location: location.coords,
+      place,
+      userId,
+      login,
+    });
+  };
+
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob();
+    const uniquePostId = Date.now().toString();
+    await db.storage().ref(`postImage/${uniquePostId}`).put(file);
+
+    const processedPhoto = await db
+      .storage()
+      .ref("postImage")
+      .child(uniquePostId)
+      .getDownloadURL();
+    return processedPhoto;
+  };
+
   return (
     <View style={styles.container}>
       <Camera style={styles.camera} ref={setCamera}>
@@ -54,6 +98,33 @@ export default function CreateScreen({ navigation }) {
       </Camera>
       <Text style={styles.text}>Завантажити фото</Text>
       <View>
+        <TextInput
+          style={styles.title}
+          placeholder={"Назва..."}
+          value={title}
+          onChangeText={(value) => {
+            setTitle((prev) => ({ ...prev, value }));
+          }}
+          onFocus={() => {
+            setIsShowKeyboard(true);
+          }}
+        />
+        <TextInput
+          style={styles.place}
+          placeholder={"Місцевість..."}
+          value={place}
+          onChangeText={(value) => {
+            setPlace((prev) => ({ ...prev, value }));
+          }}
+          onFocus={() => {
+            setIsShowKeyboard(true);
+          }}
+        />
+        <View style={{ position: "absolute", top: 65, left: 16 }}>
+          <Feather name="map-pin" size={24} color="#BDBDBD" />
+        </View>
+      </View>
+      <View>
         <TouchableOpacity style={styles.btnSubmit} onPress={sendPhoto}>
           <Text style={styles.btnText}>Опублікувати</Text>
         </TouchableOpacity>
@@ -66,8 +137,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
-    // justifyContent: "center",
-    // alignItems: "center",
   },
   camera: {
     height: 240,
@@ -106,8 +175,8 @@ const styles = StyleSheet.create({
   },
   photo: {
     height: 240,
-    width: 240,
-    // width: Dimensions.get("window").width - 32,
+    // width: 240,
+    width: Dimensions.get("window").width - 32,
     borderRadius: 8,
   },
   text: {
@@ -134,5 +203,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     color: "#FFFFFF",
+  },
+  title: {
+    paddingBottom: 16,
+    paddingTop: 16,
+    marginHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E8E8E8",
+    fontSize: 16,
+    lineHeight: 19,
+    color: "#212121",
+  },
+  place: {
+    paddingBottom: 16,
+    paddingTop: 16,
+    paddingLeft: 28,
+    marginHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E8E8E8",
+    fontSize: 16,
+    lineHeight: 19,
+    color: "#212121",
   },
 });

@@ -12,8 +12,11 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { authSignInUser } from "../../redux/auth/authOperations";
+
 const initialState = {
-  email: "",
+  mail: "",
   password: "",
 };
 export default function LoginScreen({ navigation }) {
@@ -22,11 +25,18 @@ export default function LoginScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
 
+  const dispatch = useDispatch();
+
+  const login = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+    dispatch(authSignInUser(state));
+    // console.log(state);
+    setState(initialState);
+  };
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-    // console.log(state);
-    setState(initialState);
   };
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
@@ -59,10 +69,10 @@ export default function LoginScreen({ navigation }) {
                 style={styles.input}
                 placeholder="Адреса електронної пошти"
                 placeholderTextColor="#BDBDBD"
-                value={state.email}
+                value={state.mail}
                 onFocus={() => setIsShowKeyboard(true)}
                 onChangeText={(value) =>
-                  setState((prevState) => ({ ...prevState, email: value }))
+                  setState((prevState) => ({ ...prevState, mail: value }))
                 }
               />
               <View>
@@ -91,7 +101,7 @@ export default function LoginScreen({ navigation }) {
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.btn}
-                onPress={keyboardHide}
+                onPress={login}
               >
                 <Text style={styles.btnTitle}>Увійти</Text>
               </TouchableOpacity>
