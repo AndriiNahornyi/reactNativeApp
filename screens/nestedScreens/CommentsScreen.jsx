@@ -1,34 +1,38 @@
 import React, { useState, useEffect } from "react";
 import {
-  Text,
   View,
+  Text,
   StyleSheet,
-  Image,
-  KeyboardAvoidingView,
   TextInput,
   TouchableOpacity,
-  Dimensions,
-  FlatList,
   SafeAreaView,
+  FlatList,
+  Image,
+  Dimensions,
+  KeyboardAvoidingView,
 } from "react-native";
-// import { useSelector } from "react-redux";
-import db from "../../firebase/config";
+import { useSelector } from "react-redux";
 import { AntDesign } from "@expo/vector-icons";
+import db from "../../firebase/config";
+
 export default function CommentsScreen({ route }) {
   const [comment, setComment] = useState("");
   const [allComments, setAllComments] = useState([]);
+
   const { postId, photo } = route.params;
-  // const { photo } = useSelector((state) => state.auth);
+  const { login, avatar } = useSelector((state) => state.auth);
+
   useEffect(() => {
     getAllComments();
   }, []);
+
   const createComment = async () => {
     await db
       .firestore()
       .collection("posts")
       .doc(postId)
       .collection("comments")
-      .add({ comment });
+      .add({ login, avatar, comment });
     setComment("");
   };
   const getAllComments = async () => {
@@ -44,32 +48,30 @@ export default function CommentsScreen({ route }) {
   return (
     <View style={styles.container}>
       <View style={{ marginTop: 32 }}>
-        <Image source={{ uri: route.params.photo }} style={styles.img} />
+        <Image source={{ uri: photo }} style={styles.image} />
       </View>
       <SafeAreaView>
         <FlatList
           style={styles.list}
           data={allComments}
+          keyExtractor={(item, indx) => indx.toString()}
           renderItem={({ item }) => (
             <View style={styles.boxComment}>
-              <Image source={{ uri: item.photo }} style={styles.avatar} />
+              <Image source={{ uri: item.avatar }} style={styles.avatar} />
               <View style={styles.boxText}>
                 <Text style={styles.textComment}>{item.comment}</Text>
-                <Text style={styles.dateComment}></Text>
+                <Text style={styles.timeComment}></Text>
               </View>
             </View>
           )}
-          keyExtractor={(item) => item.id}
         />
       </SafeAreaView>
-      <KeyboardAvoidingView
-        behavior={Platform.OS == "ios" ? "padding" : "height"}
-      >
+      <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : ""}>
         <View style={{ marginTop: 6, marginHorizontal: 16 }}>
           <TextInput
             value={comment}
-            onChangeText={(value) => setComment(value)}
             style={styles.comment}
+            onChangeText={(value) => setComment(value)}
             placeholder="Коментувати..."
             placeholderTextColor="#BDBDBD"
           />
@@ -86,32 +88,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
   },
-  img: {
-    marginHorizontal: 16,
+  image: {
     height: 240,
-    marginBottom: 8,
     borderRadius: 8,
-  },
-  comment: {
-    position: "relative",
-    height: 50,
-    width: Dimensions.get("window").width - 32,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: "#E8E8E8",
-    borderRadius: 100,
-    backgroundColor: "#F6F6F6",
-  },
-  btn: {
-    position: "absolute",
-    top: 8,
-    right: 8,
-    height: 34,
-    width: 34,
-    backgroundColor: "#FF6C00",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: "50%",
+    // width: Dimensions.get("window").width - 32,
+    marginHorizontal: 16,
+    marginBottom: 8,
+    // marginBottom: 32,
   },
   list: {
     marginBottom: 32,
@@ -143,5 +126,27 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     color: "#212121",
+  },
+  timeComment: {},
+  comment: {
+    position: "relative",
+    height: 50,
+    width: Dimensions.get("window").width - 32,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: "#E8E8E8",
+    borderRadius: 100,
+    backgroundColor: "#F6F6F6",
+  },
+  btn: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    height: 34,
+    width: 34,
+    backgroundColor: "#FF6C00",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "50%",
   },
 });

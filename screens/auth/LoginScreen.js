@@ -11,19 +11,20 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
+  Dimensions,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { authSignInUser } from "../../redux/auth/authOperations";
 
 const initialState = {
-  mail: "",
+  email: "",
   password: "",
 };
+
 export default function LoginScreen({ navigation }) {
-  // console.log(navigation);
-  // console.log(Platform.OS);
-  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [isPasswordSecure, setIsPasswordSecure] = useState(true);
 
   const dispatch = useDispatch();
 
@@ -31,9 +32,9 @@ export default function LoginScreen({ navigation }) {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
     dispatch(authSignInUser(state));
-    // console.log(state);
     setState(initialState);
   };
+
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
@@ -45,57 +46,54 @@ export default function LoginScreen({ navigation }) {
           style={styles.image}
           source={require("../../assets/images/Photo-BG.jpg")}
         >
-          <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : ""}
+          <View
+            style={{
+              ...Platform.select({
+                ios: {
+                  ...styles.form,
+                  marginBottom: isShowKeyboard ? 58 : 0,
+                  // marginBottom: isShowKeyboard ? 180 : 0,
+                },
+                android: {
+                  ...styles.form,
+                  // paddingBottom: isShowKeyboard ? 0 : 140,
+                },
+              }),
+            }}
           >
-            <View
-              style={{
-                ...Platform.select({
-                  ios: {
-                    ...styles.form,
-                    marginBottom: isShowKeyboard ? 58 : 0,
-                    // marginBottom: isShowKeyboard ? 180 : 0,
-                  },
-                  android: {
-                    ...styles.form,
-                    // paddingBottom: isShowKeyboard ? 0 : 140,
-                  },
-                }),
-              }}
+            <KeyboardAvoidingView
+              behavior={Platform.OS == "ios" ? "padding" : ""}
             >
               <Text style={styles.text}>Увійти</Text>
               <TextInput
-                // onSubmitEditing={onReturn}
                 style={styles.input}
+                value={state.email}
                 placeholder="Адреса електронної пошти"
                 placeholderTextColor="#BDBDBD"
-                value={state.mail}
                 onFocus={() => setIsShowKeyboard(true)}
                 onChangeText={(value) =>
-                  setState((prevState) => ({ ...prevState, mail: value }))
+                  setState((prevState) => ({ ...prevState, email: value }))
                 }
               />
               <View>
                 <TextInput
-                  // onSubmitEditing={onReturn}
                   style={styles.input}
+                  value={state.password}
                   placeholder="Пароль"
                   placeholderTextColor="#BDBDBD"
-                  value={state.password}
-                  secureTextEntry={true}
+                  secureTextEntry={isPasswordSecure}
                   onFocus={() => setIsShowKeyboard(true)}
                   onChangeText={(value) =>
                     setState((prevState) => ({ ...prevState, password: value }))
                   }
                 />
                 <Text
-                  // onPress={() => {
-                  //   setIsPasswordSecure(!isPasswordSecure);
-                  // }}              або
-                  // onPress={changeIsPasswordSecure}
+                  onPress={() => {
+                    setIsPasswordSecure(!isPasswordSecure);
+                  }}
                   style={styles.showPassword}
                 >
-                  {/* {isPasswordSecure ? "Показати" : "Приховати"} */}
+                  {isPasswordSecure ? "Показати" : "Приховати"}
                 </Text>
               </View>
               <TouchableOpacity
@@ -110,8 +108,8 @@ export default function LoginScreen({ navigation }) {
               >
                 <Text style={styles.login}>Немає акаунту? Зареєструватися</Text>
               </TouchableOpacity>
-            </View>
-          </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
+          </View>
         </ImageBackground>
         <StatusBar style="auto" />
       </View>
@@ -127,6 +125,13 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
     justifyContent: "flex-end",
+  },
+  form: {
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    paddingTop: 32,
+    height: 489,
+    backgroundColor: "#fff",
   },
   text: {
     marginHorizontal: 16,
@@ -152,20 +157,20 @@ const styles = StyleSheet.create({
   },
   showPassword: {
     position: "absolute",
-    top: 32,
-    // top: 152,
+    position: "absolute",
+    ...Platform.select({
+      ios: {
+        top: 32,
+      },
+      android: {
+        top: 38,
+      },
+    }),
     right: 32,
     color: "#1B4371",
     fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
-  },
-  form: {
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    paddingTop: 32,
-    height: 489,
-    backgroundColor: "#fff",
   },
   btn: {
     justifyContent: "center",

@@ -11,24 +11,34 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
+  Dimensions,
+  Image,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { authSignUpUser } from "../../redux/auth/authOperations";
+import { Camera, CameraType } from "expo-camera";
+import { AntDesign } from "@expo/vector-icons";
 
 const initialState = {
+  login: "",
   mail: "",
   password: "",
-  login: "",
-  // photo: '',
+  avatar: null,
 };
 
 export default function RegistrationScreen({ navigation }) {
-  // console.log(navigation);
-  // console.log(Platform.OS);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
+  const [isPasswordSecure, setIsPasswordSecure] = useState(true);
+  const [camera, setCamera] = useState(null);
 
   const dispatch = useDispatch();
+
+  const takePhoto = async () => {
+    const { status } = await Camera.requestCameraPermissionsAsync();
+    const avatar = await camera.takePictureAsync();
+    setState((prev) => ({ ...prev, avatar: avatar.uri }));
+  };
 
   const registration = () => {
     setIsShowKeyboard(false);
@@ -49,53 +59,99 @@ export default function RegistrationScreen({ navigation }) {
           style={styles.image}
           source={require("../../assets/images/Photo-BG.jpg")}
         >
-          <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : ""}
+          <View
+            style={{
+              ...Platform.select({
+                ios: {
+                  ...styles.form,
+                  marginBottom: isShowKeyboard ? 140 : 0,
+                },
+                android: {
+                  ...styles.form,
+                  // paddingBottom: isShowKeyboard ? 0 : 78,
+                },
+              }),
+            }}
           >
-            <View
-              style={{
-                ...Platform.select({
-                  ios: {
-                    ...styles.form,
-                    marginBottom: isShowKeyboard ? 140 : 0,
-                    // marginBottom: isShowKeyboard ? 180 : 0,
-                  },
-                  android: {
-                    ...styles.form,
-                    // paddingBottom: isShowKeyboard ? 0 : 78,
-                  },
-                }),
-              }}
+            <Camera
+              style={styles.camera}
+              ref={setCamera}
+              type={CameraType.front}
+            >
+              {state.avatar && (
+                <>
+                  <View style={styles.takePhotoBox}>
+                    <Image
+                      source={{ uri: state.avatar }}
+                      style={styles.avatar}
+                    />
+                  </View>
+                </>
+              )}
+            </Camera>
+            {state.avatar && (
+              <TouchableOpacity
+                onPress={() => {
+                  setState((prev) => ({ ...prev, avatar: "" }));
+                }}
+                style={{
+                  position: "absolute",
+                  bottom: 510,
+                  right: 126,
+                  width: 24,
+                  height: 24,
+                  backgroundColor: "#fff",
+                  borderRadius: 50,
+                  borderWidth: 1,
+                  borderColor: "#E8E8E8",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <AntDesign name="close" size={20} color="#BDBDBD" />
+              </TouchableOpacity>
+            )}
+            {!state.avatar && (
+              <TouchableOpacity
+                style={{
+                  position: "absolute",
+                  bottom: 510,
+                  right: 124,
+                }}
+                onPress={takePhoto}
+              >
+                <AntDesign name="pluscircleo" size={25} color="#FF6C00" />
+              </TouchableOpacity>
+            )}
+            <KeyboardAvoidingView
+              behavior={Platform.OS == "ios" ? "padding" : ""}
             >
               <Text style={styles.text}>Реєстрація</Text>
               <TextInput
-                // onSubmitEditing={onReturn}
                 style={styles.input}
+                value={state.login}
                 placeholder="Логін"
                 placeholderTextColor="#BDBDBD"
-                value={state.login}
                 onFocus={() => setIsShowKeyboard(true)}
                 onChangeText={(value) =>
                   setState((prevState) => ({ ...prevState, login: value }))
                 }
               />
               <TextInput
-                // onSubmitEditing={onReturn}
                 style={styles.input}
+                value={state.mail}
                 placeholder="Адреса електронної пошти"
                 placeholderTextColor="#BDBDBD"
-                value={state.mail}
                 onFocus={() => setIsShowKeyboard(true)}
                 onChangeText={(value) =>
                   setState((prevState) => ({ ...prevState, mail: value }))
                 }
               />
               <TextInput
-                // onSubmitEditing={onReturn}
                 style={styles.input}
+                value={state.password}
                 placeholder="Пароль"
                 placeholderTextColor="#BDBDBD"
-                value={state.password}
                 secureTextEntry={true}
                 onFocus={() => setIsShowKeyboard(true)}
                 onChangeText={(value) =>
@@ -103,17 +159,16 @@ export default function RegistrationScreen({ navigation }) {
                 }
               />
               <Text
-                // onPress={() => {
-                //   setIsPasswordSecure(!isPasswordSecure);
-                // }}   або
-                //   onPress={changeIsPasswordSecure}
                 style={styles.showPassword}
+                onPress={() => {
+                  setIsPasswordSecure(!isPasswordSecure);
+                }}
               >
-                {/* {isPasswordSecure ? "Показати" : "Приховати"} */}
+                {isPasswordSecure ? "Показати" : "Приховати"}
               </Text>
               <TouchableOpacity
-                activeOpacity={0.8}
                 style={styles.btn}
+                activeOpacity={0.8}
                 onPress={registration}
               >
                 <Text style={styles.btnTitle}>Зареєструватися</Text>
@@ -121,8 +176,8 @@ export default function RegistrationScreen({ navigation }) {
               <TouchableOpacity onPress={() => navigation.navigate("Login")}>
                 <Text style={styles.login}>Вже є акаунт? Увійти</Text>
               </TouchableOpacity>
-            </View>
-          </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
+          </View>
         </ImageBackground>
         <StatusBar style="auto" />
       </View>
@@ -138,6 +193,32 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     resizeMode: "cover",
+  },
+  form: {
+    position: "relative",
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    paddingTop: 32,
+    height: 549,
+    backgroundColor: "#FFFFFF",
+  },
+  camera: {
+    position: "absolute",
+    overflow: "hidden",
+    top: -60,
+    left: "35%",
+    width: 120,
+    height: 120,
+    backgroundColor: "#F6F6F6",
+    borderRadius: 16,
+  },
+  takePhotoBox: {
+    position: "absolute",
+  },
+  avatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 16,
   },
   text: {
     marginTop: 92,
@@ -165,22 +246,21 @@ const styles = StyleSheet.create({
   },
   showPassword: {
     position: "absolute",
-    top: 32,
-    // top: 320,
+    ...Platform.select({
+      ios: {
+        top: 315,
+      },
+      android: {
+        top: 338,
+      },
+    }),
     right: 32,
     color: "#1B4371",
     fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
   },
-  form: {
-    position: "relative",
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    paddingTop: 32,
-    height: 549,
-    backgroundColor: "#fff",
-  },
+
   btn: {
     justifyContent: "center",
     alignItems: "center",
